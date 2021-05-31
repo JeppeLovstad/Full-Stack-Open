@@ -1,13 +1,4 @@
-import logo from './logo.svg';
-
-
-const Hello = (props) => {
-  return (
-    <div>
-      <p>Hello {props.name}, how are {props.rand}</p>
-    </div>
-  )
-}
+import React, { useState } from 'react'
 
 const Header = (props) => {
   return (
@@ -17,55 +8,62 @@ const Header = (props) => {
   )
 }
 
-const Part1 = (props) => {
+const Part = (props) => {
   return (
     <div>
       <p>{props.part} {props.exercise}</p>
     </div>)
 }
 
-const Part2 = (props) => {
+const Content = ({parts}) => {
   return (
     <div>
-      <p>{props.part} {props.exercise}</p>
-    </div>)
-}
-
-const Part3 = (props) => {
-  return (
-    <div>
-      <p>{props.part} {props.exercise}</p>
-    </div>)
-}
-
-const Content = (props) => {
-  return (
-    <div>
-      < Part1 part={props.parts[0].name} exercise={props.parts[0].exercise}/>
-      < Part2 part={props.parts[1].name} exercise={props.parts[1].exercise}/>
-      < Part3 part={props.parts[2].name} exercise={props.parts[2].exercise}/>
+      {parts.map(({key,exercise}) => {
+      return < Part key={key} part={key} exercise={exercise}/>
+      })}
     </div>
   )
 }
 
-const Total = (props) => {
+const Total = ({exercises}) => {
+  const t = exercises.reduce((total, currVal, index) => total + currVal.exercise, 0)
+  
   return (
     <div>
-      <p>Number of exercises {props.parts[0].exercise + props.parts[1].exercise + props.parts[2].exercise}</p>
+      <p>Number of exercises {t}</p>
     </div>
   )
 }
 
-function App() {
+const ButtonDisplay = ({counter}) => <div>{counter}</div>
+
+
+const Button = ({name, handler}) => {
+  return (
+    <button onClick={handler}>
+    {name}
+  </button>
+  )
+}
+
+function App(props) {
   const now = new Date()
   const a = Math.random()
   const b = 20
-  const course = {name:'Half Stack application development',
+  let [counter, setCounter] = useState(0)
+  const course = {key:'Half Stack application development',
    parts:[
-                {name:'Fundamentals of React', exercise:10},
-                {name:'Using props to pass data', exercise:7},
-                {name:'State of a component', exercise:14}]
+                {key:'Fundamentals of React', exercise:10},
+                {key:'Using props to pass data', exercise:7},
+                {key:'State of a component', exercise:14}]
    }
+
+  // setTimeout( 
+  //   () => setCounter(counter += 1),
+  //   1000)
+  
+  const incrementOnClick = () => (setCounter(counter + 1))
+
   return (
     <div className="App">
       <header className="App-header">
@@ -74,9 +72,13 @@ function App() {
           {now.toUTCString()} <br/>
           {a} + {b} = {a + b}
         </p>
-      < Header course={course.name}/>
+        <ButtonDisplay counter={counter} />
+        <Button handler={incrementOnClick} name={"add 1"}/>
+
+
+      < Header course={course.key}/>
       < Content parts={course.parts} />
-      < Total parts={course.parts}/>
+      < Total exercises={course.parts}/>
       </header>
     </div>
   );
